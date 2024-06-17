@@ -5,6 +5,14 @@ TagManager:
   serializedVersion: 2
   tags:
   - NPC
+  - Enemy
+  - Party
+  - PlayerAttack
+  - EnemyAttack
+  - PartyAttack
+  - NpcAttack
+  - Item
+  - Wall
   layers:
   - Default
   - TransparentFX

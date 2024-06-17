@@ -1,15 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerCtrl : MonoBehaviour
 {
-    public LayerMask interactionLayer;
+    public static PlayerCtrl instance;
+
+    [Header("Main Stat")]
+    //main
+    public int level;
+    public int exp;
+
+    public int interactionRadius;
+
+    [Space()]
+    public int power;
+    public int dexterity;
+    public int intellect;
+    public int charisama;
+
+    [Space()]
+    public int HP;
+    public int MaxHP;
+    public int HG;
+    public int MaxHG;
+    public int ST;
+    public int MaxST;
+
+    [Header("Additional Stat")]
+    //consider with power
+    public int strikeDamage;
+    public int defense;
+    public int movePower;
+
+    [Space()]
+    //consider with dexterity
+    public float stealth;
+    public float dodge;
+    public float critical;
+
+    [Space()]
+    //consider with intellect
+    public int magicDamage;
+
+    [Space()]
+    //consider with charisama
+    public int charm;
+
+    [Header("Equip Stat")]
+    public int weaponDamage;
+    public int weaponEnergy;
+    public int equipDefense;
+    public int equipWeight;
+    public int equipCharm;
 
     //type
     public Dictionary<string, int> parts = new Dictionary<string, int>();
 
-    //sprite
+    [Header("Sprite")]
     public SpriteRenderer[] partsSpriteRenderer;
 
     public Sprite[] EmoticonSpr;
@@ -19,19 +69,26 @@ public class PlayerCtrl : MonoBehaviour
     public Sprite[] rightHandSpr;
     public Sprite[] leftLegSpr;
     public Sprite[] rightLegSpr;
+    public Sprite[] directionSpr;
 
-    //move
-    public float movePower;
-    int moveDirection; // 1 = up, 2 = left, 3 = down, 4 = right
+    //dir
+    int Direction = 2; // 0 = up, 1 = left, 2 = down, 3 = right
 
-    //mod
+    [Header("Attack")]
+    public GameObject attackPrefab;
+
+    public Sprite[] attackSpr;
+
+    [Header("Mod")]
     public string mod;
     public float delay;
+    public bool isVillan;
 
-    //interaction
+    [Header("Interaction")]
     public BoxCollider2D interactionColider;
+    public LayerMask interactionLayer;
 
-
+    //base
     Rigidbody2D rigid;
 
     Animator animator;
@@ -40,6 +97,8 @@ public class PlayerCtrl : MonoBehaviour
 
     private void Awake()
     {
+        instance = this;
+
         parts.Add("Emoticon", 0);
         parts.Add("Head", 0);
         parts.Add("Body", 0);
@@ -47,6 +106,7 @@ public class PlayerCtrl : MonoBehaviour
         parts.Add("RHand", 0);
         parts.Add("LLeg", 0);
         parts.Add("RLeg", 0);
+        parts.Add("Dir", 0);
     }
 
     void Start()
@@ -58,6 +118,7 @@ public class PlayerCtrl : MonoBehaviour
     private void Update()
     {
         init();
+        StatCtrl();
         SpriteCtrl();
         AniCtrl();
         Attack();
@@ -80,16 +141,134 @@ public class PlayerCtrl : MonoBehaviour
             mod = null;
             animator.SetBool("hand", false);
             animator.SetBool("weapon", false);
+
+            for(int i = 0; i < partsSpriteRenderer.Length; i++)
+            {
+                partsSpriteRenderer[i].color = Color.white;
+            }
+
             delay = 0;
         }
     }
 
+    void StatCtrl()
+    {
+        #region EquipStat
+
+        int WD = 0;
+        int WE = 0;
+        int ED = 0;
+        int EW = 0;
+        int EC = 0;
+
+        //Left Hand
+        if (parts["LHand"] == 0)
+        {
+            WD += 0;
+            EW += 0;
+        }
+        else if (parts["LHand"] == 1)
+        {
+            WD += 10;
+            EW += 1;
+            EC -= 3;
+        }
+
+        //Right Hand
+        if (parts["RHand"] == 0)
+        {
+            ED += 0;
+            EW += 0;
+        }
+        else if (parts["RHand"] == 1)
+        {
+            ED += 3;
+            EW += 1;
+            EC -= 1;
+        }
+
+        //Head
+        if (parts["Head"] == 0)
+        {
+            ED += 0;
+            EW += 0;
+        }
+        else if (parts["Head"] == 1)
+        {
+            ED += 1;
+            EW += 0;
+        }
+
+        //Body
+        if (parts["Body"] == 0)
+        {
+            ED += 0;
+            EW += 0;
+        }
+        else if (parts["Body"] == 1)
+        {
+            ED += 5;
+            EW += 1;
+        }
+
+        //Shoes
+        if (parts["LLeg"] == 0)
+        {
+            ED += 0;
+            EW += 0;
+        }
+        else if (parts["LLeg"] == 1)
+        {
+            ED += 0;
+            EW += -1;
+            EC += 1;
+        }
+
+
+        weaponDamage = WD;
+        weaponEnergy = WE;
+        equipDefense = ED;
+        equipWeight = EW;
+        equipCharm = EC;
+
+        #endregion
+
+        //Set Stat Formula
+        MaxHP = 30 + power * 2;
+        MaxST = 100 + dexterity * 4;
+
+        strikeDamage = (int)(power * 1.2f) + weaponDamage;
+        defense = (int)(power * 0.5f) + equipDefense;
+
+        if(mod == "Hide")
+        {
+            movePower = (15 + (int)(power * 0.2f) - equipWeight) / 3;
+            stealth = 100 * (1 - Mathf.Exp(-0.05f * dexterity));
+        }
+        else
+        {
+            movePower = 15 + (int)(power * 0.2f) - equipWeight;
+            stealth = (100 * (1 - Mathf.Exp(-0.05f * dexterity))) / 2;
+        }
+
+        dodge = 100 * (1 - Mathf.Exp(-0.05f * dexterity)) / 2.8f;
+        critical = 100 * (1 - Mathf.Exp(-0.02f * dexterity));
+
+        magicDamage = intellect * 1 + weaponEnergy;
+
+        charm = 5 + charisama * 1 + equipCharm;
+    }
+
     void Attack()
     {
-        if(Input.GetKeyDown(KeyCode.Z) && mod != "Attack" && mod != "Interaction")
+        if(Input.GetKeyDown(KeyCode.Z) && mod != "Attack" && mod != "Interaction" && mod != "Hit")
         {
             delay = 1;
             mod = "Attack";
+
+            Invoke("AttackInstantiate", 0.8f);
+            
+            //ani
             if (parts["LHand"] == 0)
             {
                 animator.SetBool("hand", true);
@@ -101,24 +280,70 @@ public class PlayerCtrl : MonoBehaviour
         }
     }
 
+    void AttackInstantiate()
+    {
+        GameObject attackObj = Instantiate(attackPrefab, transform.position + new Vector3(0, -1.5f, 0), Quaternion.identity, gameObject.transform);
+        attackObj.tag = "PlayerAttack";
+        attackObj.GetComponent<AttackCtrl>().dir = Direction;
+
+        //weapon Type
+        if (parts["LHand"] == 0)
+        {
+            attackObj.GetComponent<SpriteRenderer>().sprite = attackSpr[0];
+
+            attackObj.GetComponent<AttackCtrl>().damage = strikeDamage;
+            attackObj.GetComponent<AttackCtrl>().lifeTime = 0.1f;
+            attackObj.GetComponent<AttackCtrl>().speed = 30f;
+        }
+        else if (parts["LHand"] == 1)
+        {
+            attackObj.GetComponent<SpriteRenderer>().sprite = attackSpr[1];
+            attackObj.GetComponent<AttackCtrl>().damage = strikeDamage;
+            attackObj.GetComponent<AttackCtrl>().lifeTime = 0.1f;
+            attackObj.GetComponent<AttackCtrl>().speed = 50f;
+        }
+
+        //Critical Check
+        float R = Random.Range(0.0f, 100.0f);
+        if (R < critical)
+        {
+            attackObj.GetComponent<AttackCtrl>().isCritical = true;
+        }
+
+        attackObj.AddComponent<PolygonCollider2D>();
+        attackObj.GetComponent<PolygonCollider2D>().isTrigger = true;
+    }
+
     void Interaction()
     {
-        Collider2D colTrigger = Physics2D.OverlapCircle(transform.position, 5, interactionLayer);
+        Collider2D colTrigger = Physics2D.OverlapCircle(transform.position, interactionRadius, interactionLayer);
 
         if (colTrigger != null)
         {
             //Emoticon
-            if(mod != "Attack" && mod != "Interaction")
+            if(mod != "Attack" && mod != "Interaction" && mod != "Hit")
             {
-                partsSpriteRenderer[0].gameObject.SetActive(true);
-
-                if (colTrigger.tag == "NPC")
+                if (colTrigger.tag == "NPC" && mod != "Hide")
                 {
                     parts["Emoticon"] = 2;
+
+                    if (partsSpriteRenderer[0].sprite == EmoticonSpr[2])
+                    {
+                        partsSpriteRenderer[0].gameObject.SetActive(true);
+                    }
                 }
                 else if (colTrigger.name == "Club")
                 {
                     parts["Emoticon"] = 1;
+
+                    if (partsSpriteRenderer[0].sprite == EmoticonSpr[1])
+                    {
+                        partsSpriteRenderer[0].gameObject.SetActive(true);
+                    }
+                }
+                else
+                {
+                    partsSpriteRenderer[0].gameObject.SetActive(false);
                 }
             }
             else
@@ -128,20 +353,24 @@ public class PlayerCtrl : MonoBehaviour
 
 
             //Start Interaction
-            if (Input.GetKeyDown(KeyCode.Space) && mod != "Attack" && mod != "Interaction")
+            if (Input.GetKeyDown(KeyCode.Space) && mod != "Attack" && mod != "Interaction" && mod != "Hit")
             {
-                delay = 1;
-                mod = "Interaction";
-
                 if (colTrigger.name == "Club")
                 {
                     parts["LHand"] = 1;
                     colTrigger.gameObject.SetActive(false);
                 }
-                else if (colTrigger.tag == "NPC")
+                else if (colTrigger.tag == "NPC" && mod != "Hide")
                 {
-                    Debug.Log("상호작용");
+                    delay = 9999;
+                    mod = "Interaction";
+
+                    colTrigger.gameObject.GetComponent<DialogSet>().SetDialog();
                 }
+            }
+            else if(Input.GetKeyDown(KeyCode.Space) && mod == "Interaction") //During Interaction
+            {
+                DialogSystem.instance.nowNPC.GetComponent<DialogSet>().NextDialog();
             }
         }
         else
@@ -157,7 +386,7 @@ public class PlayerCtrl : MonoBehaviour
 
         movement.Normalize();
 
-        if (mod != "Attack" && mod != "Interaction")
+        if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
         {
             rigid.velocity = movement * movePower;
         }
@@ -166,22 +395,42 @@ public class PlayerCtrl : MonoBehaviour
             rigid.velocity = Vector2.zero;
         }
 
-        //moveDirection
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        //Direction
+        if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
         {
-            moveDirection = 1;
+            if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+            {
+                Direction = 0;
+            }
+            else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+            {
+                Direction = 1;
+            }
+            else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+            {
+                Direction = 2;
+            }
+            else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+            {
+                Direction = 3;
+            }
         }
-        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+
+        if (Direction == 0)
         {
-            moveDirection = 2;
+            parts["Dir"] = 0;
         }
-        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        else if (Direction == 1)
         {
-            moveDirection = 3;
+            parts["Dir"] = 1;
         }
-        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        else if (Direction == 2)
         {
-            moveDirection = 4;
+            parts["Dir"] = 2;
+        }
+        else if (Direction == 3)
+        {
+            parts["Dir"] = 3;
         }
     }
 
@@ -194,14 +443,52 @@ public class PlayerCtrl : MonoBehaviour
         partsSpriteRenderer[4].sprite = rightHandSpr[parts["RHand"]];
         partsSpriteRenderer[5].sprite = leftLegSpr[parts["LLeg"]];
         partsSpriteRenderer[6].sprite = rightLegSpr[parts["RLeg"]];
+        partsSpriteRenderer[7].sprite = directionSpr[parts["Dir"]];
+    }
+
+    public void HitEffect()
+    {
+        delay = 0.2f;
+        mod = "Hit";
+
+        for (int i = 1; i < partsSpriteRenderer.Length - 1; i++)
+        {
+            partsSpriteRenderer[i].color = Color.red;
+        }
     }
 
     void AniCtrl()
     {
-        //move
+        //move and hide
+        if(Input.GetKey(KeyCode.LeftShift) && mod != "Attack" && mod != "Interaction" && mod != "Hit")
+        {
+            delay = 9999;
+            mod = "Hide";
+            animator.SetBool("hide", true);
+
+            for (int i = 1; i < partsSpriteRenderer.Length - 1; i++)
+            {
+                partsSpriteRenderer[i].color = new Color(1, 1, 1, 0.7f);
+            }
+        }
+        else
+        {
+            if(mod == "Hide")
+            {
+                delay = 0;
+            }
+
+            for (int i = 0; i < partsSpriteRenderer.Length; i++)
+            {
+                partsSpriteRenderer[i].color = Color.white;
+            }
+
+            animator.SetBool("hide", false);
+        }
+
         if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)
             || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.RightArrow))
-            && mod != "Attack" && mod != "Interaction")
+            && mod != "Attack" && mod != "Interaction" && mod != "Hit")
         {
             animator.SetBool("move", true);
         }
@@ -216,21 +503,6 @@ public class PlayerCtrl : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, 5);
+        Gizmos.DrawWireSphere(transform.position, interactionRadius);
     }
-
-    //private void OnTriggerStay2D(Collider2D collision)
-    //{
-    //    if (collision != null && mod != "Attack" && mod != "Interaction")
-    //    {
-    //        Debug.Log("충돌중");
-    //        if (collision.tag == "NPC")
-    //        {
-    //            if (Input.GetKeyDown(KeyCode.Space))
-    //            {
-    //                Debug.Log("interaction with NPC");
-    //            }
-    //        }
-    //    }
-    //}
 }
