@@ -29,6 +29,7 @@ public class NpcCtrl : MonoBehaviour
     public int strikeDamage;
     public int defense;
     public int movePower;
+    public int startMovePower;
 
     [Space()]
     //consider with dexterity
@@ -65,9 +66,12 @@ public class NpcCtrl : MonoBehaviour
     public Sprite[] attackSpr;
 
     [Header("Mod")]
+    public GameObject particleEffect;
     public int pattern; // 0 = Normal, 1 = Combat
     public string mod;
     public float delay;
+    public bool isDead;
+    public bool isTired;
 
     //base
     Rigidbody2D rigid;
@@ -95,6 +99,8 @@ public class NpcCtrl : MonoBehaviour
         rigid = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
 
+        startMovePower = movePower;
+
         movePattern = UnityEngine.Random.Range(0, 5);
         moveTime = UnityEngine.Random.Range(1.0f, 5.0f);
     }
@@ -102,14 +108,35 @@ public class NpcCtrl : MonoBehaviour
     private void Update()
     {
         init();
-        Combat();
-        SpriteCtrl();
-        AniCtrl();
+        StatCtrl();
+
+        if (!isDead)
+        {
+            SpriteCtrl();
+
+            if (!isTired)
+            {
+                AniCtrl();
+                Combat();
+            }
+            else
+            {
+                rigid.velocity = Vector2.zero;
+            }
+        }
+        else
+        {
+            gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
+            rigid.velocity = Vector2.zero;
+        }
     }
 
     private void FixedUpdate()
     {
-        Move();
+        if (!isDead && !isTired)
+        {
+            Move();
+        }
     }
 
     void WhatIsCharacter()
@@ -170,6 +197,62 @@ public class NpcCtrl : MonoBehaviour
             }
 
             delay = 0;
+        }
+    }
+
+    void StatCtrl()
+    {
+        movePower = startMovePower;
+
+        movePower = (int)(movePower * (ST / (float)MaxST));
+
+        if (movePower <= startMovePower / 2)
+        {
+            particleEffect.SetActive(true);
+            movePower = startMovePower / 2;
+        }
+        else
+        {
+            particleEffect.SetActive(false);
+        }
+
+        //Cheack HP and ST
+        if (HP <= 0)
+        {
+            HP = 0;
+            isDead = true;
+
+            partsSpriteRenderer[0].gameObject.SetActive(false);
+            partsSpriteRenderer[7].gameObject.SetActive(false);
+
+            animator.SetBool("move", false);
+            animator.SetBool("hide", false);
+            animator.SetBool("hand", false);
+            animator.SetBool("weapon", false);
+            animator.SetBool("Tool", false);
+            animator.SetBool("dead", true);
+        }
+        else
+        {
+            isDead = false;
+            animator.SetBool("dead", false);
+        }
+
+        if (ST <= 0)
+        {
+            ST = 0;
+            isTired = true;
+            animator.SetBool("move", false);
+            animator.SetBool("hide", false);
+            animator.SetBool("hand", false);
+            animator.SetBool("weapon", false);
+            animator.SetBool("Tool", false);
+            animator.SetBool("tired", true);
+        }
+        else
+        {
+            isTired = false;
+            animator.SetBool("tired", false);
         }
     }
 
@@ -240,7 +323,7 @@ public class NpcCtrl : MonoBehaviour
         {
             if (pattern == 0)
             {
-                if (mod != "Attack" && mod != "Hit")
+                if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
                 {
                     rigid.velocity = movement * movePower / 2;
                 }
@@ -251,7 +334,7 @@ public class NpcCtrl : MonoBehaviour
             }
             else
             {
-                if (mod != "Attack" && mod != "Hit")
+                if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
                 {
                     rigid.velocity = movement * movePower;
                 }
@@ -269,16 +352,27 @@ public class NpcCtrl : MonoBehaviour
             }
             else
             {
-                if (moveCol[1].tag == gameObject.tag || moveCol[1].tag == "Wall")
+                if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
                 {
-                    //방향 전환
-                    if (movePattern < 3)
+                    if (moveCol[1].tag == gameObject.tag || moveCol[1].tag == "Wall")
                     {
-                        movePattern += 1;
+                        //방향 전환
+                        if (movePattern < 3)
+                        {
+                            movePattern += 1;
+                        }
+                        else
+                        {
+                            movePattern = 0;
+                        }
                     }
                     else
                     {
-                        movePattern = 0;
+                        if (moveCol[1].tag != "Item")
+                        {
+                            rigid.velocity = Vector2.zero;
+                            Attack();
+                        }
                     }
                 }
             }
@@ -302,6 +396,8 @@ public class NpcCtrl : MonoBehaviour
         }
     }
 
+    float RecogDelay;
+
     void Combat()
     {
         Collider2D[] aggroCol = Physics2D.OverlapCircleAll(transform.position, aggroRadius);
@@ -320,9 +416,23 @@ public class NpcCtrl : MonoBehaviour
                     {
                         pattern = 1;
 
+                        RecogDelay = 2;
+
                         CheckCombatType(col);
 
                         break;
+                    }
+                    else
+                    {
+                        if( RecogDelay > 0)
+                        {
+                            RecogDelay -= 1 * Time.deltaTime;
+                        }
+                        else
+                        {
+                            RecogDelay = 0;
+                            pattern = 0;
+                        }
                     }
                 }
             }
@@ -334,9 +444,23 @@ public class NpcCtrl : MonoBehaviour
                     {
                         pattern = 1;
 
+                        RecogDelay = 2;
+
                         CheckCombatType(col);
 
                         break;
+                    }
+                    else
+                    {
+                        if (RecogDelay > 0)
+                        {
+                            RecogDelay -= 1 * Time.deltaTime;
+                        }
+                        else
+                        {
+                            RecogDelay = 0;
+                            pattern = 0;
+                        }
                     }
                 }
             }
@@ -348,9 +472,23 @@ public class NpcCtrl : MonoBehaviour
                     {
                         pattern = 1;
 
+                        RecogDelay = 2;
+
                         CheckCombatType(col);
 
                         break;
+                    }
+                    else
+                    {
+                        if (RecogDelay > 0)
+                        {
+                            RecogDelay -= 1 * Time.deltaTime;
+                        }
+                        else
+                        {
+                            RecogDelay = 0;
+                            pattern = 0;
+                        }
                     }
                 }
             }
@@ -358,7 +496,7 @@ public class NpcCtrl : MonoBehaviour
 
         void CheckCombatType(Collider2D col)
         {
-            if (mod != "Attack" && mod != "Hit")
+            if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
             {
                 Collider2D[] rangeCol = Physics2D.OverlapBoxAll(transform.position + movement * (range / 2), new Vector3(4 + ((range / 1.5f) * Mathf.Abs(movement.x)), 5.5f + ((range / 1.5f - 1.5f) * Mathf.Abs(movement.y)), 5) * transform.localScale.x, 0);
                 GameObject target = col.gameObject;
@@ -797,7 +935,7 @@ public class NpcCtrl : MonoBehaviour
 
     void Attack()
     {
-        if (mod != "Attack" && mod != "Hit")
+        if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
         {
             delay = 1;
             mod = "Attack";
@@ -954,6 +1092,11 @@ public class NpcCtrl : MonoBehaviour
         Beggars,
         Bandit,
         BanditBoss,
+        Rat,
+        Bug,
+        Dog,
+        Wolf,
+        Slime,
         Goblin,
         Oak,
         Ogre,

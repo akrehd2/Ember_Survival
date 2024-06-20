@@ -95,6 +95,8 @@ public class DialogSystem : MonoBehaviour
     
     void OffDialog()
     {
+        nowNPC.GetComponent<NpcCtrl>().delay = 0;
+
         nowNPC = null;
 
         dialog.SetActive(false);

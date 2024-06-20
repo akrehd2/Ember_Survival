@@ -12,6 +12,7 @@ public class PlayerCtrl : MonoBehaviour
     //main
     public int level;
     public int exp;
+    public int MaxExp;
 
     public int interactionRadius;
 
@@ -80,9 +81,12 @@ public class PlayerCtrl : MonoBehaviour
     public Sprite[] attackSpr;
 
     [Header("Mod")]
+    public GameObject particleEffect;
     public string mod;
     public float delay;
     public bool isVillan;
+    public bool isDead;
+    public bool isTired;
 
     [Header("Interaction")]
     public BoxCollider2D interactionColider;
@@ -119,15 +123,35 @@ public class PlayerCtrl : MonoBehaviour
     {
         init();
         StatCtrl();
-        SpriteCtrl();
-        AniCtrl();
-        Attack();
-        Interaction();
+
+        if (!isDead)
+        {
+            SpriteCtrl();
+
+            if (!isTired)
+            {
+                AniCtrl();
+                Attack();
+                Interaction();
+            }
+            else
+            {
+                rigid.velocity = Vector2.zero;
+            }
+        }
+        else
+        {
+            gameObject.GetComponent<CapsuleCollider2D>().enabled = false;
+            rigid.velocity = Vector2.zero;
+        }
     }
 
     private void FixedUpdate()
     {
-        Move();
+        if (!isDead && !isTired)
+        {
+            Move();
+        }
     }
 
     void init()
@@ -243,11 +267,37 @@ public class PlayerCtrl : MonoBehaviour
         if(mod == "Hide")
         {
             movePower = (15 + (int)(power * 0.2f) - equipWeight) / 3;
+
+            movePower = (int)(movePower * (ST / (float)MaxST));
+
+            if (movePower <= ((15 + (int)(power * 0.2f) - equipWeight) / 3) / 2)
+            {
+                particleEffect.SetActive(true);
+                movePower = ((15 + (int)(power * 0.2f) - equipWeight) / 3) / 2;
+            }
+            else
+            {
+                particleEffect.SetActive(false);
+            }
+
             stealth = 100 * (1 - Mathf.Exp(-0.05f * dexterity));
         }
         else
         {
             movePower = 15 + (int)(power * 0.2f) - equipWeight;
+
+            movePower = (int)(movePower * (ST / (float)MaxST));
+
+            if (movePower <= (15 + (int)(power * 0.2f) - equipWeight) / 2)
+            {
+                particleEffect.SetActive(true);
+                movePower = (15 + (int)(power * 0.2f) - equipWeight) / 2;
+            }
+            else
+            {
+                particleEffect.SetActive(false);
+            }
+
             stealth = (100 * (1 - Mathf.Exp(-0.05f * dexterity))) / 2;
         }
 
@@ -257,6 +307,45 @@ public class PlayerCtrl : MonoBehaviour
         magicDamage = intellect * 1 + weaponEnergy;
 
         charm = 5 + charisama * 1 + equipCharm;
+
+        //Cheack HP and ST
+        if(HP <= 0)
+        {
+            HP = 0;
+            isDead = true;
+
+            partsSpriteRenderer[0].gameObject.SetActive(false);
+            partsSpriteRenderer[7].gameObject.SetActive(false);
+
+            animator.SetBool("move", false);
+            animator.SetBool("hide", false);
+            animator.SetBool("hand", false);
+            animator.SetBool("weapon", false);
+            animator.SetBool("Tool", false);
+            animator.SetBool("dead", true);
+        }
+        else
+        {
+            isDead = false;
+            animator.SetBool("dead", false);
+        }
+
+        if (ST <= 0)
+        {
+            ST = 0;
+            isTired = true;
+            animator.SetBool("move", false);
+            animator.SetBool("hide", false);
+            animator.SetBool("hand", false);
+            animator.SetBool("weapon", false);
+            animator.SetBool("Tool", false);
+            animator.SetBool("tired", true);
+        }
+        else
+        {
+            isTired = false;
+            animator.SetBool("tired", false);
+        }
     }
 
     void Attack()
@@ -323,7 +412,7 @@ public class PlayerCtrl : MonoBehaviour
             //Emoticon
             if(mod != "Attack" && mod != "Interaction" && mod != "Hit")
             {
-                if (colTrigger.tag == "NPC" && mod != "Hide")
+                if (colTrigger.tag == "NPC" && !isVillan && mod != "Hide")
                 {
                     parts["Emoticon"] = 2;
 
@@ -332,7 +421,7 @@ public class PlayerCtrl : MonoBehaviour
                         partsSpriteRenderer[0].gameObject.SetActive(true);
                     }
                 }
-                else if (colTrigger.name == "Club")
+                else if (colTrigger.tag == "Item")
                 {
                     parts["Emoticon"] = 1;
 
@@ -355,16 +444,17 @@ public class PlayerCtrl : MonoBehaviour
             //Start Interaction
             if (Input.GetKeyDown(KeyCode.Space) && mod != "Attack" && mod != "Interaction" && mod != "Hit")
             {
-                if (colTrigger.name == "Club")
+                if (colTrigger.tag == "Item")
                 {
-                    parts["LHand"] = 1;
-                    colTrigger.gameObject.SetActive(false);
+                    UICtrl.instance.AddInventory(colTrigger.gameObject, colTrigger.GetComponent<SpriteRenderer>().sprite);
                 }
-                else if (colTrigger.tag == "NPC" && mod != "Hide")
+                else if (colTrigger.tag == "NPC" && !isVillan && mod != "Hide")
                 {
                     delay = 9999;
                     mod = "Interaction";
 
+                    colTrigger.gameObject.GetComponent<NpcCtrl>().delay = 9999;
+                    colTrigger.gameObject.GetComponent<NpcCtrl>().mod = "Interaction";
                     colTrigger.gameObject.GetComponent<DialogSet>().SetDialog();
                 }
             }
