@@ -12,6 +12,7 @@ TagManager:
   - PartyAttack
   - NpcAttack
   - Item
+  - Object
   - Wall
   layers:
   - Default

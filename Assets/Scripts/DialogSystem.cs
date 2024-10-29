@@ -6,6 +6,20 @@ using UnityEngine;
 
 public class DialogSystem : MonoBehaviour
 {
+    // DialogDataStruct 클래스 정의
+    [System.Serializable]
+    public class DialogDataStruct
+    {
+        public string[] nameList;
+        public string[] dialogList;
+
+        public DialogDataStruct(string[] nameList, string[] dialogList)
+        {
+            this.nameList = nameList;
+            this.dialogList = dialogList;
+        }
+    }
+
     public static DialogSystem instance;
 
     public GameObject nowNPC;

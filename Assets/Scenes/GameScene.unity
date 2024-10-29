@@ -2599,7 +2599,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -44, y: -25}
+  m_AnchoredPosition: {x: -28.75, y: -28.75}
   m_SizeDelta: {x: 37.5, y: 37.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &339400080
@@ -2678,7 +2678,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 71342cd6719464a4e8f94af99b7972f3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8f21cf95188324a4084ff72954a13f66, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11632,7 +11632,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -44, y: -25}
+  m_AnchoredPosition: {x: -28.75, y: -28.75}
   m_SizeDelta: {x: 37.5, y: 37.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1856328234
@@ -11711,7 +11711,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 71342cd6719464a4e8f94af99b7972f3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8f21cf95188324a4084ff72954a13f66, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13297,6 +13297,18 @@ PrefabInstance:
     - target: {fileID: 1508377018242132186, guid: 578827d8f4458a04f9cafa09ee1c72e5, type: 3}
       propertyPath: dialogS.Array.data[2]
       value: "\uADF8\uB7EC\uAC8C!"
+      objectReference: {fileID: 0}
+    - target: {fileID: 1508377018242132186, guid: 578827d8f4458a04f9cafa09ee1c72e5, type: 3}
+      propertyPath: dialogDataList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1508377018242132186, guid: 578827d8f4458a04f9cafa09ee1c72e5, type: 3}
+      propertyPath: dialogDataList.Array.data[0].nameList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1508377018242132186, guid: 578827d8f4458a04f9cafa09ee1c72e5, type: 3}
+      propertyPath: dialogDataList.Array.data[0].dialogList.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4389139164200518875, guid: 578827d8f4458a04f9cafa09ee1c72e5, type: 3}
       propertyPath: m_LocalPosition.x

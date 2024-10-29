@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static DialogSystem;
 
 public class DialogSet : MonoBehaviour
 {
+    public DialogDataStruct[] dialogDataList;
+
     public int nowIndex;
 
     public string[] nameS;
@@ -11,6 +14,8 @@ public class DialogSet : MonoBehaviour
 
     public void SetDialog()
     {
+        nowIndex = 0;
+
         DialogSystem.instance.nowNPC = gameObject;
 
         DialogSystem.instance.nameString = nameS[nowIndex];
