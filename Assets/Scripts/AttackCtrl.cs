@@ -133,6 +133,17 @@ public class AttackCtrl : MonoBehaviour
                     }
                     else if (collision.tag == "Player")
                     {
+                        //후방 공격인지 체크
+                        if (dir == collision.GetComponent<PlayerCtrl>().Direction)
+                        {
+                            if (!isCritical) //크리티컬이 아니면 크리티컬로 변경
+                            {
+                                damage = (int)(damage * 1.5f);
+                                isCritical = true;
+                            }
+                        }
+
+                        //데미지에서 방어력만큼 뺌, 방어력 계산
                         damage -= collision.GetComponent<PlayerCtrl>().defense;
 
                         if (damage <= 0)
@@ -194,6 +205,17 @@ public class AttackCtrl : MonoBehaviour
                     }
                     else if (collision.tag == "Player")
                     {
+                        //후방 공격인지 체크
+                        if (dir == collision.GetComponent<PlayerCtrl>().Direction)
+                        {
+                            if (!isCritical) //크리티컬이 아니면 크리티컬로 변경
+                            {
+                                damage = (int)(damage * 1.5f);
+                                isCritical = true;
+                            }
+                        }
+
+                        //데미지에서 방어력만큼 뺌, 방어력 계산
                         damage -= collision.GetComponent<PlayerCtrl>().defense;
 
                         if (damage <= 0)
@@ -255,6 +277,17 @@ public class AttackCtrl : MonoBehaviour
                     }
                     else if (collision.tag == "Player")
                     {
+                        //후방 공격인지 체크
+                        if (dir == collision.GetComponent<PlayerCtrl>().Direction)
+                        {
+                            if (!isCritical) //크리티컬이 아니면 크리티컬로 변경
+                            {
+                                damage = (int)(damage * 1.5f);
+                                isCritical = true;
+                            }
+                        }
+
+                        //데미지에서 방어력만큼 뺌, 방어력 계산
                         damage -= collision.GetComponent<PlayerCtrl>().defense;
 
                         if (damage <= 0)
@@ -306,6 +339,17 @@ public class AttackCtrl : MonoBehaviour
 
         void CheckDefenseAndDodge()
         {
+            //후방 공격인지 체크
+            if (dir == collision.GetComponent<NpcCtrl>().Direction)
+            {
+                if (!isCritical) //크리티컬이 아니면 크리티컬로 변경
+                {
+                    damage = (int)(damage * 1.5f);
+                    isCritical = true;
+                }
+            }
+
+            //데미지에서 방어력만큼 뺌, 방어력 계산
             damage -= collision.GetComponent<NpcCtrl>().defense;
 
             if (damage <= 0)

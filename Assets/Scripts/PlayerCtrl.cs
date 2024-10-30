@@ -73,7 +73,8 @@ public class PlayerCtrl : MonoBehaviour
     public Sprite[] directionSpr;
 
     //dir
-    int Direction = 2; // 0 = up, 1 = left, 2 = down, 3 = right
+    public int Direction = 2; // 0 = up, 1 = left, 2 = down, 3 = right
+    float shiftTime = 0;
 
     [Header("Attack")]
     public GameObject attackPrefab;
@@ -133,6 +134,7 @@ public class PlayerCtrl : MonoBehaviour
                 AniCtrl();
                 Attack();
                 Interaction();
+                StaminaCtrl();
             }
             else
             {
@@ -608,7 +610,28 @@ public class PlayerCtrl : MonoBehaviour
         //attack
     }
 
-    private void OnDrawGizmos()
+    void StaminaCtrl()  //스태미나 소모 관리
+    {
+        if (Input.GetKey(KeyCode.LeftShift))    //숨기:Hide
+        {
+            if(shiftTime < 5)
+            {
+                shiftTime += 1 * Time.deltaTime;
+            }
+            else
+            {
+                ST -= 1;
+                shiftTime = 0;
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))    //공격:Attack
+        {
+            ST -= 2;
+        }
+    }
+
+        private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, interactionRadius);
