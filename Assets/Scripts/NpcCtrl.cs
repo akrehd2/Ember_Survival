@@ -193,7 +193,7 @@ public class NpcCtrl : MonoBehaviour
 
             for (int i = 0; i < partsSpriteRenderer.Length; i++)
             {
-                partsSpriteRenderer[i].color = Color.white;
+                partsSpriteRenderer[i].material.color = Color.white;
             }
 
             delay = 0;
@@ -1066,7 +1066,7 @@ public class NpcCtrl : MonoBehaviour
 
         for (int i = 1; i < partsSpriteRenderer.Length - 1; i++)
         {
-            partsSpriteRenderer[i].color = Color.red;
+            partsSpriteRenderer[i].material.color = Color.red;
         }
     }
 

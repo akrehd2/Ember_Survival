@@ -166,9 +166,9 @@ public class PlayerCtrl : MonoBehaviour
             animator.SetBool("hand", false);
             animator.SetBool("weapon", false);
 
-            for(int i = 0; i < partsSpriteRenderer.Length; i++)
+            for(int i = 1; i < partsSpriteRenderer.Length - 1; i++)
             {
-                partsSpriteRenderer[i].color = Color.white;
+                partsSpriteRenderer[i].material.color = Color.white;
             }
 
             delay = 0;
@@ -264,7 +264,7 @@ public class PlayerCtrl : MonoBehaviour
         strikeDamage = (int)(power * 1.2f) + weaponDamage;
         defense = (int)(power * 0.5f) + equipDefense;
 
-        if(mod == "Hide")
+        if (mod == "Hide" || mod == "HideAttack")
         {
             movePower = (15 + (int)(power * 0.2f) - equipWeight) / 3;
 
@@ -350,13 +350,31 @@ public class PlayerCtrl : MonoBehaviour
 
     void Attack()
     {
-        if(Input.GetKeyDown(KeyCode.Z) && mod != "Attack" && mod != "Interaction" && mod != "Hit")
+        if(Input.GetKeyDown(KeyCode.Z) && mod != "Hide" && mod != "Attack" && mod != "HideAttack" && mod != "Interaction" && mod != "Hit")
         {
             delay = 1;
             mod = "Attack";
 
-            Invoke("AttackInstantiate", 0.8f);
+            Invoke("AttackInstantiate", 0.6f);
             
+            //ani
+            if (parts["LHand"] == 0)
+            {
+                animator.SetBool("hand", true);
+            }
+            else
+            {
+                animator.SetBool("weapon", true);
+            }
+        }
+        //HideAttack
+        else if (Input.GetKeyDown(KeyCode.Z) && mod == "Hide" && mod != "Attack" && mod != "HideAttack" && mod != "Interaction" && mod != "Hit")
+        {
+            delay = 1;
+            mod = "HideAttack";
+
+            Invoke("AttackInstantiate", 0.6f);
+
             //ani
             if (parts["LHand"] == 0)
             {
@@ -442,7 +460,7 @@ public class PlayerCtrl : MonoBehaviour
 
 
             //Start Interaction
-            if (Input.GetKeyDown(KeyCode.Space) && mod != "Attack" && mod != "Interaction" && mod != "Hit")
+            if (Input.GetKeyDown(KeyCode.Space) && mod != "Attack" && mod != "HideAttack" && mod != "Interaction" && mod != "Hit")
             {
                 if (colTrigger.tag == "Item")
                 {
@@ -476,7 +494,7 @@ public class PlayerCtrl : MonoBehaviour
 
         movement.Normalize();
 
-        if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
+        if (mod != "Attack" && mod != "HideAttack" && mod != "Interaction" && mod != "Hit")
         {
             rigid.velocity = movement * movePower;
         }
@@ -486,7 +504,7 @@ public class PlayerCtrl : MonoBehaviour
         }
 
         //Direction
-        if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
+        if (mod != "Attack" && mod != "HideAttack" && mod != "Interaction" && mod != "Hit")
         {
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
             {
@@ -543,14 +561,14 @@ public class PlayerCtrl : MonoBehaviour
 
         for (int i = 1; i < partsSpriteRenderer.Length - 1; i++)
         {
-            partsSpriteRenderer[i].color = Color.red;
+            partsSpriteRenderer[i].material.color = Color.red;
         }
     }
 
     void AniCtrl()
     {
         //move and hide
-        if(Input.GetKey(KeyCode.LeftShift) && mod != "Attack" && mod != "Interaction" && mod != "Hit")
+        if(Input.GetKey(KeyCode.LeftShift) && mod != "Attack" && mod != "HideAttack" && mod != "Interaction" && mod != "Hit")
         {
             delay = 9999;
             mod = "Hide";
@@ -558,7 +576,7 @@ public class PlayerCtrl : MonoBehaviour
 
             for (int i = 1; i < partsSpriteRenderer.Length - 1; i++)
             {
-                partsSpriteRenderer[i].color = new Color(1, 1, 1, 0.7f);
+                partsSpriteRenderer[i].material.color = new Color(1, 1, 1, 0.7f);
             }
         }
         else
@@ -568,9 +586,9 @@ public class PlayerCtrl : MonoBehaviour
                 delay = 0;
             }
 
-            for (int i = 0; i < partsSpriteRenderer.Length; i++)
+            for (int i = 1; i < partsSpriteRenderer.Length - 1; i++)
             {
-                partsSpriteRenderer[i].color = Color.white;
+                partsSpriteRenderer[i].material.color = Color.white;
             }
 
             animator.SetBool("hide", false);
@@ -578,7 +596,7 @@ public class PlayerCtrl : MonoBehaviour
 
         if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)
             || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.RightArrow))
-            && mod != "Attack" && mod != "Interaction" && mod != "Hit")
+            && mod != "Attack" && mod != "HideAttack" && mod != "Interaction" && mod != "Hit")
         {
             animator.SetBool("move", true);
         }
