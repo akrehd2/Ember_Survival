@@ -8,6 +8,7 @@ public class UICtrl : MonoBehaviour
 {
     public static UICtrl instance;
 
+    public GameObject InGameUI;
 
     [Header("Portrait")]
     public Image FaceRenderer;
@@ -191,12 +192,13 @@ public class UICtrl : MonoBehaviour
         StatUIs[2].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.MaxST.ToString();
         StatUIs[3].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.strikeDamage.ToString();
         StatUIs[4].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.magicDamage.ToString();
-        StatUIs[5].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.defense.ToString();
-        StatUIs[6].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.stealth.ToString("N1") + "%";
-        StatUIs[7].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.dodge.ToString("N1") + "%";
-        StatUIs[8].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.critical.ToString("N1") + "%";
-        StatUIs[9].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.charm.ToString();
-        StatUIs[10].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.movePower.ToString();
+        StatUIs[5].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.deterrent.ToString();
+        StatUIs[6].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.defense.ToString();
+        StatUIs[7].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.stealth.ToString("N1") + "%";
+        StatUIs[8].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.dodge.ToString("N1") + "%";
+        StatUIs[9].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.critical.ToString("N1") + "%";
+        StatUIs[10].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.charm.ToString();
+        StatUIs[11].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = PlayerCtrl.instance.movePower.ToString();
     }
 
     public void AddInventory(GameObject colItem, Sprite imageSprite)

@@ -41,8 +41,8 @@ public class IconDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         // Drop이벤트를 정상적으로 감지하기 위해 Icon RectTransform을 무시 
         GetComponent<CanvasGroup>().blocksRaycasts = false;
 
-        // 드래그 시작할때 부모transform을 변경
-        transform.SetParent(onDragParent);
+        // 드래그 시작할때 제일 위에 보이도록 부모 transform 변경
+        transform.SetParent(UICtrl.instance.InGameUI.transform);
     }
 
     // 인터페이스 IDragHandler 상속 받았을 때 구현 해야하는 콜백함수
@@ -59,10 +59,12 @@ public class IconDrag : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         beingDraggedIcon = null;
         GetComponent<CanvasGroup>().blocksRaycasts = true;
 
+        onDragParent = transform.parent.parent.parent;
+
         // 혹 드랍이벤트에 따라 부모가 변경되지 않고 
         // 이동중에 할당 되었던 부모 transform과 같다면
         // Icon의 부모와 위치를 원복한다.
-        if (transform.parent == onDragParent)
+        if (onDragParent == null)
         {
             transform.position = startPosition;
             transform.SetParent(startParent);

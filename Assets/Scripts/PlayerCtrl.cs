@@ -38,6 +38,7 @@ public class PlayerCtrl : MonoBehaviour
 
     [Space()]
     //consider with dexterity
+    public float deterrent;
     public float stealth;
     public float dodge;
     public float critical;
@@ -53,6 +54,7 @@ public class PlayerCtrl : MonoBehaviour
     [Header("Equip Stat")]
     public int weaponDamage;
     public int weaponEnergy;
+    public int weaponDeterrent;
     public int equipDefense;
     public int equipWeight;
     public int equipCharm;
@@ -183,6 +185,7 @@ public class PlayerCtrl : MonoBehaviour
 
         int WD = 0;
         int WE = 0;
+        int WT = 0;
         int ED = 0;
         int EW = 0;
         int EC = 0;
@@ -192,11 +195,13 @@ public class PlayerCtrl : MonoBehaviour
         {
             WD += 0;
             EW += 0;
+            WT += 0;
         }
         else if (parts["LHand"] == 1)
         {
             WD += 10;
             EW += 1;
+            WT += 5;
             EC -= 3;
         }
 
@@ -253,6 +258,7 @@ public class PlayerCtrl : MonoBehaviour
 
         weaponDamage = WD;
         weaponEnergy = WE;
+        weaponDeterrent = WT;
         equipDefense = ED;
         equipWeight = EW;
         equipCharm = EC;
@@ -303,6 +309,7 @@ public class PlayerCtrl : MonoBehaviour
             stealth = (100 * (1 - Mathf.Exp(-0.05f * dexterity))) / 2;
         }
 
+        deterrent = (int)(dexterity * 0.5f) + weaponDeterrent;
         dodge = 100 * (1 - Mathf.Exp(-0.05f * dexterity)) / 2.8f;
         critical = 100 * (1 - Mathf.Exp(-0.02f * dexterity));
 
