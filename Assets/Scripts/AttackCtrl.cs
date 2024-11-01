@@ -10,6 +10,7 @@ public class AttackCtrl : MonoBehaviour
     public int dir;
 
     public int damage;
+    public int deterrentDamage;
 
     public float lifeTime;
     float spawnTime;
@@ -52,6 +53,7 @@ public class AttackCtrl : MonoBehaviour
         float R = Random.Range(0.9f, 1.1f);
 
         damage = (int)(damage * R);
+        deterrentDamage = (int)(deterrentDamage * R);
     }
 
     private void Update()
@@ -92,6 +94,13 @@ public class AttackCtrl : MonoBehaviour
                         CheckDefenseAndDodge();
                     }
 
+                    //deterrent 저지력 텍스트
+                    GameObject damageDeterrentText = Instantiate(damageTextPrefab, new Vector2(transform.position.x + 1.3f, transform.position.y - 1.3f), Quaternion.identity, collision.transform);
+                    GameObject deterrentTextchild = damageDeterrentText.transform.GetChild(0).gameObject;
+
+                    deterrentTextchild.GetComponent<TMP_Text>().text = deterrentDamage.ToString();
+                    deterrentTextchild.GetComponent<TMP_Text>().color = new Color(0.85f, 1, 0.36f);
+
                     GameObject damageText = Instantiate(damageTextPrefab, transform.position, Quaternion.identity, collision.transform);
                     GameObject Textchild = damageText.transform.GetChild(0).gameObject;
 
@@ -100,6 +109,8 @@ public class AttackCtrl : MonoBehaviour
                         Textchild.GetComponent<RectTransform>().sizeDelta = new Vector2(5, 5);
                         Textchild.GetComponent<TMP_Text>().text = "Miss";
                         Textchild.GetComponent<TMP_Text>().color = new Color(0.85f, 0.4f, 1);
+
+                        Destroy(damageDeterrentText);
                     }
                     else //적중
                     {
@@ -160,9 +171,17 @@ public class AttackCtrl : MonoBehaviour
                         else
                         {
                             collision.GetComponent<PlayerCtrl>().HP -= damage;
+                            collision.GetComponent<PlayerCtrl>().ST -= deterrentDamage;
                             collision.GetComponent<PlayerCtrl>().HitEffect();
                         }
                     }
+
+                    //deterrent 저지력 텍스트
+                    GameObject damageDeterrentText = Instantiate(damageTextPrefab, new Vector2(transform.position.x + 1.3f, transform.position.y - 1.3f), Quaternion.identity, collision.transform);
+                    GameObject deterrentTextchild = damageDeterrentText.transform.GetChild(0).gameObject;
+
+                    deterrentTextchild.GetComponent<TMP_Text>().text = deterrentDamage.ToString();
+                    deterrentTextchild.GetComponent<TMP_Text>().color = new Color(0.85f, 1, 0.36f);
 
                     GameObject damageText = Instantiate(damageTextPrefab, transform.position, Quaternion.identity, collision.transform);
                     GameObject Textchild = damageText.transform.GetChild(0).gameObject;
@@ -172,6 +191,8 @@ public class AttackCtrl : MonoBehaviour
                         Textchild.GetComponent<RectTransform>().sizeDelta = new Vector2(5, 5);
                         Textchild.GetComponent<TMP_Text>().text = "Miss";
                         Textchild.GetComponent<TMP_Text>().color = new Color(1, 0.36f, 0.23f);
+
+                        Destroy(damageDeterrentText);
                     }
                     else //적중
                     {
@@ -232,9 +253,17 @@ public class AttackCtrl : MonoBehaviour
                         else
                         {
                             collision.GetComponent<PlayerCtrl>().HP -= damage;
+                            collision.GetComponent<PlayerCtrl>().ST -= deterrentDamage;
                             collision.GetComponent<PlayerCtrl>().HitEffect();
                         }
                     }
+
+                    //deterrent 저지력 텍스트
+                    GameObject damageDeterrentText = Instantiate(damageTextPrefab, new Vector2(transform.position.x + 1.3f, transform.position.y - 1.3f), Quaternion.identity, collision.transform);
+                    GameObject deterrentTextchild = damageDeterrentText.transform.GetChild(0).gameObject;
+
+                    deterrentTextchild.GetComponent<TMP_Text>().text = deterrentDamage.ToString();
+                    deterrentTextchild.GetComponent<TMP_Text>().color = new Color(0.85f, 1, 0.36f);
 
                     GameObject damageText = Instantiate(damageTextPrefab, transform.position, Quaternion.identity, collision.transform);
                     GameObject Textchild = damageText.transform.GetChild(0).gameObject;
@@ -244,6 +273,8 @@ public class AttackCtrl : MonoBehaviour
                         Textchild.GetComponent<RectTransform>().sizeDelta = new Vector2(5, 5);
                         Textchild.GetComponent<TMP_Text>().text = "Miss";
                         Textchild.GetComponent<TMP_Text>().color = new Color(1, 0.36f, 0.23f);
+
+                        Destroy(damageDeterrentText);
                     }
                     else //적중
                     {
@@ -304,9 +335,17 @@ public class AttackCtrl : MonoBehaviour
                         else
                         {
                             collision.GetComponent<PlayerCtrl>().HP -= damage;
+                            collision.GetComponent<PlayerCtrl>().ST -= deterrentDamage;
                             collision.GetComponent<PlayerCtrl>().HitEffect();
                         }
                     }
+
+                    //deterrent 저지력 텍스트
+                    GameObject damageDeterrentText = Instantiate(damageTextPrefab, new Vector2(transform.position.x + 1.3f, transform.position.y - 1.3f), Quaternion.identity, collision.transform);
+                    GameObject deterrentTextchild = damageDeterrentText.transform.GetChild(0).gameObject;
+
+                    deterrentTextchild.GetComponent<TMP_Text>().text = deterrentDamage.ToString();
+                    deterrentTextchild.GetComponent<TMP_Text>().color = new Color(0.85f, 1, 0.36f);
 
                     GameObject damageText = Instantiate(damageTextPrefab, transform.position, Quaternion.identity, collision.transform);
                     GameObject Textchild = damageText.transform.GetChild(0).gameObject;
@@ -316,6 +355,8 @@ public class AttackCtrl : MonoBehaviour
                         Textchild.GetComponent<RectTransform>().sizeDelta = new Vector2(5, 5);
                         Textchild.GetComponent<TMP_Text>().text = "Miss";
                         Textchild.GetComponent<TMP_Text>().color = new Color(0.6f, 1, 1);
+
+                        Destroy(damageDeterrentText);
                     }
                     else //적중
                     {
@@ -366,7 +407,14 @@ public class AttackCtrl : MonoBehaviour
             else
             {
                 collision.GetComponent<NpcCtrl>().HP -= damage;
+                collision.GetComponent<NpcCtrl>().ST -= deterrentDamage;
                 collision.GetComponent<NpcCtrl>().HitEffect();
+
+                if(collision.GetComponent<NpcCtrl>().combatType == NpcCtrl.CombatPersonalityType.Chicken)
+                {
+                    collision.GetComponent<NpcCtrl>().isScared = false;
+                    collision.GetComponent<NpcCtrl>().particleEffect.transform.GetChild(2).gameObject.SetActive(true);    //PainFace:고통스런 얼굴
+                }
             }
         }
     }

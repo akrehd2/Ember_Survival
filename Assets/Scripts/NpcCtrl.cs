@@ -33,6 +33,7 @@ public class NpcCtrl : MonoBehaviour
 
     [Space()]
     //consider with dexterity
+    public int deterrent;
     public float dodge;
     public float critical;
 
@@ -57,6 +58,8 @@ public class NpcCtrl : MonoBehaviour
 
     [Header("Pattern")]
     public int Direction = 2; // 0 = up, 1 = left, 2 = down, 3 = right
+    float combatTime = 0;
+    float chickenTime = 0;
     public int movePattern;
     public float moveTime;
 
@@ -72,6 +75,7 @@ public class NpcCtrl : MonoBehaviour
     public float delay;
     public bool isDead;
     public bool isTired;
+    public bool isScared;
 
     //base
     Rigidbody2D rigid;
@@ -208,12 +212,16 @@ public class NpcCtrl : MonoBehaviour
 
         if (movePower <= startMovePower / 2)
         {
-            particleEffect.SetActive(true);
+            //땀 파티클 활성화
+            particleEffect.transform.GetChild(0).gameObject.SetActive(true);    //LeftSweat:왼쪽 땀
+            particleEffect.transform.GetChild(1).gameObject.SetActive(true);    //RightSweat:왼쪽 땀
             movePower = startMovePower / 2;
         }
         else
         {
-            particleEffect.SetActive(false);
+            //땀 파티클 비활성화
+            particleEffect.transform.GetChild(0).gameObject.SetActive(false);    //LeftSweat:왼쪽 땀
+            particleEffect.transform.GetChild(1).gameObject.SetActive(false);    //RightSweat:왼쪽 땀
         }
 
         //Cheack HP and ST
@@ -321,7 +329,7 @@ public class NpcCtrl : MonoBehaviour
 
         if(moveCol.Length == 1)
         {
-            if (pattern == 0)
+            if (pattern == 0)   //전투 중이 아니면:normal
             {
                 if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
                 {
@@ -332,11 +340,22 @@ public class NpcCtrl : MonoBehaviour
                     rigid.velocity = Vector2.zero;
                 }
             }
-            else
+            else    //전투 중이면:combat
             {
                 if (mod != "Attack" && mod != "Interaction" && mod != "Hit")
                 {
                     rigid.velocity = movement * movePower;
+
+                    //지속적으로 스태미나 소모
+                    if (combatTime < 5)
+                    {
+                        combatTime += 1 * Time.deltaTime;
+                    }
+                    else
+                    {
+                        ST -= 1;
+                        combatTime = 0;
+                    }
                 }
                 else
                 {
@@ -903,28 +922,43 @@ public class NpcCtrl : MonoBehaviour
                     }
                     else if (combatType == CombatPersonalityType.Chicken)
                     {
-                        moveDir = transform.position - target.transform.position;
-
-                        if (Mathf.Abs(moveDir.x) > Mathf.Abs(moveDir.y))
+                        if (isScared)   //겁먹었으면
                         {
-                            if (moveDir.x > 0)
-                            {
-                                movePattern = 3;
-                            }
-                            else
-                            {
-                                movePattern = 1;
-                            }
+                            movePattern = 4;
+                            chickenTime = 0;
                         }
                         else
                         {
-                            if (moveDir.y > 0)
+                            moveDir = transform.position - target.transform.position;
+
+                            if (Mathf.Abs(moveDir.x) > Mathf.Abs(moveDir.y))
                             {
-                                movePattern = 0;
+                                if (moveDir.x > 0)
+                                {
+                                    movePattern = 3;
+                                }
+                                else
+                                {
+                                    movePattern = 1;
+                                }
                             }
                             else
                             {
-                                movePattern = 2;
+                                if (moveDir.y > 0)
+                                {
+                                    movePattern = 0;
+                                }
+                                else
+                                {
+                                    movePattern = 2;
+                                }
+                            }
+
+                            chickenTime += 1 * Time.deltaTime;
+
+                            if(chickenTime >= 5)    //5초간 도망치면 겁먹음
+                            {
+                                isScared = true;
                             }
                         }
                     }
@@ -956,6 +990,8 @@ public class NpcCtrl : MonoBehaviour
 
     void AttackInstantiate()
     {
+        ST -= 2;
+
         GameObject attackObj = Instantiate(attackPrefab, transform.position + new Vector3(0, -1.5f, 0), Quaternion.identity, gameObject.transform);
         
         if(tag == "NPC")
@@ -976,6 +1012,7 @@ public class NpcCtrl : MonoBehaviour
         }
 
         attackObj.GetComponent<AttackCtrl>().dir = Direction;
+        attackObj.GetComponent<AttackCtrl>().deterrentDamage = deterrent;
 
         //weapon Type
         if (parts["LHand"] == 0)

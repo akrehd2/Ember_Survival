@@ -71,6 +71,7 @@ MonoBehaviour:
   defense: 0
   movePower: 0
   startMovePower: 0
+  deterrent: 0
   dodge: 0
   critical: 0
   magicDamage: 0
@@ -140,6 +141,7 @@ MonoBehaviour:
   delay: 0
   isDead: 0
   isTired: 0
+  isScared: 0
 --- !u!114 &1508377018242132186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,6 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30d7c01867ae71349b46f90775c919c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialogDataList: []
   nowIndex: 0
   nameS: []
   dialogS: []
@@ -921,10 +924,6 @@ PrefabInstance:
     - target: {fileID: 4537921551702147411, guid: 28ac805476ca051479af7feffabaa8f9, type: 3}
       propertyPath: m_Name
       value: ParticleEffect
-      objectReference: {fileID: 0}
-    - target: {fileID: 4537921551702147411, guid: 28ac805476ca051479af7feffabaa8f9, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5893300386670493534, guid: 28ac805476ca051479af7feffabaa8f9, type: 3}
       propertyPath: m_LocalPosition.x

@@ -38,7 +38,7 @@ public class PlayerCtrl : MonoBehaviour
 
     [Space()]
     //consider with dexterity
-    public float deterrent;
+    public int deterrent;
     public float stealth;
     public float dodge;
     public float critical;
@@ -408,6 +408,7 @@ public class PlayerCtrl : MonoBehaviour
             attackObj.GetComponent<SpriteRenderer>().sprite = attackSpr[0];
 
             attackObj.GetComponent<AttackCtrl>().damage = strikeDamage;
+            attackObj.GetComponent<AttackCtrl>().deterrentDamage = deterrent;
             attackObj.GetComponent<AttackCtrl>().lifeTime = 0.1f;
             attackObj.GetComponent<AttackCtrl>().speed = 30f;
         }
@@ -415,6 +416,7 @@ public class PlayerCtrl : MonoBehaviour
         {
             attackObj.GetComponent<SpriteRenderer>().sprite = attackSpr[1];
             attackObj.GetComponent<AttackCtrl>().damage = strikeDamage;
+            attackObj.GetComponent<AttackCtrl>().deterrentDamage = deterrent;
             attackObj.GetComponent<AttackCtrl>().lifeTime = 0.1f;
             attackObj.GetComponent<AttackCtrl>().speed = 50f;
         }
