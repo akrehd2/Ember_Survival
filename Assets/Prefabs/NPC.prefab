@@ -90,6 +90,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9ac9b516fcbe23544a7b85f54bf03baa, type: 3}
   - {fileID: 21300000, guid: bfea9a1958a6d3f4a881db7c0e9176af, type: 3}
   - {fileID: 21300000, guid: 9c104e023d9065c4580324c59b1455a9, type: 3}
+  - {fileID: 21300000, guid: 349388483b3f7334cbacb43002270646, type: 3}
   headSpr:
   - {fileID: 21300000, guid: d6ac5f5525a275745a1b5e6e7f90a015, type: 3}
   - {fileID: 21300000, guid: 9642d90e5a324d149b6d6adbda5aabde, type: 3}

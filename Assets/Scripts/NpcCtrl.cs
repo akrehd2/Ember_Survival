@@ -954,9 +954,9 @@ public class NpcCtrl : MonoBehaviour
                                 }
                             }
 
-                            chickenTime += 1 * Time.deltaTime;
+                            chickenTime += 1;
 
-                            if(chickenTime >= 5)    //5초간 도망치면 겁먹음
+                            if(chickenTime >= 10)    //5초간 도망치면 겁먹음
                             {
                                 isScared = true;
                             }
@@ -1083,7 +1083,14 @@ public class NpcCtrl : MonoBehaviour
         //Emoticon
         if(pattern == 1)
         {
-            parts["Emoticon"] = 1;
+            if (isScared)
+            {
+                parts["Emoticon"] = 5;
+            }
+            else
+            {
+                parts["Emoticon"] = 1;
+            }
 
             if (partsSpriteRenderer[0].sprite == EmoticonSpr[1])
             {

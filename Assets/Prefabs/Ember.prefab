@@ -346,6 +346,7 @@ MonoBehaviour:
   strikeDamage: 0
   defense: 0
   movePower: 0
+  deterrent: 0
   stealth: 0
   dodge: 0
   critical: 0
@@ -353,6 +354,7 @@ MonoBehaviour:
   charm: 0
   weaponDamage: 0
   weaponEnergy: 0
+  weaponDeterrent: 0
   equipDefense: 0
   equipWeight: 0
   equipCharm: 0
@@ -371,6 +373,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 9ac9b516fcbe23544a7b85f54bf03baa, type: 3}
   - {fileID: 21300000, guid: bfea9a1958a6d3f4a881db7c0e9176af, type: 3}
   - {fileID: 21300000, guid: 9c104e023d9065c4580324c59b1455a9, type: 3}
+  - {fileID: 21300000, guid: 349388483b3f7334cbacb43002270646, type: 3}
   headSpr:
   - {fileID: 21300000, guid: 68b927b355cc1ba47893e1004cab6b27, type: 3}
   bodySpr:
@@ -394,6 +397,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: dd1d11ca910ee47478939a8a2e507217, type: 3}
   - {fileID: 21300000, guid: e61dcfd6a98e33b46853655418baa6e6, type: 3}
   - {fileID: 21300000, guid: 1ed5af942274e564180d6d9262efa9de, type: 3}
+  Direction: 2
   attackPrefab: {fileID: 6081089063828563218, guid: 5ccecd861a2f40e4fa57574cdbb4ce62, type: 3}
   attackSpr:
   - {fileID: 21300000, guid: c4a435e8db98a684cbca4c8d89d3bbd9, type: 3}
