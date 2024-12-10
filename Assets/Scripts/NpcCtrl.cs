@@ -76,6 +76,7 @@ public class NpcCtrl : MonoBehaviour
     public bool isDead;
     public bool isTired;
     public bool isScared;
+    public bool isWitness;
 
     //base
     Rigidbody2D rigid;
@@ -1093,6 +1094,10 @@ public class NpcCtrl : MonoBehaviour
             }
 
             if (partsSpriteRenderer[0].sprite == EmoticonSpr[1])
+            {
+                partsSpriteRenderer[0].gameObject.SetActive(true);
+            }
+            else if (partsSpriteRenderer[0].sprite == EmoticonSpr[5])
             {
                 partsSpriteRenderer[0].gameObject.SetActive(true);
             }
