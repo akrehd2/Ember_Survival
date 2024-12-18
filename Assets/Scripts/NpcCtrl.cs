@@ -10,6 +10,7 @@ public class NpcCtrl : MonoBehaviour
     public CharacterType characterType;
     public NpcType npcType;
     public CombatPersonalityType combatType;
+    public GameObject LightObj;
 
     [Header("Main Stat")]
     //main
@@ -203,6 +204,9 @@ public class NpcCtrl : MonoBehaviour
 
             delay = 0;
         }
+
+        //Ctrl Light
+        LightObj.SetActive(npcType == NpcType.Party);
     }
 
     void StatCtrl()
